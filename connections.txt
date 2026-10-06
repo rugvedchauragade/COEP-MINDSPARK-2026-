@@ -1,70 +1,100 @@
-================================================================================
-                        BOT WRESTLING - MINDSPARK COEP
-                           COMPLETE CONNECTIONS LIST
-================================================================================
+Wiring & Connections
 
---------------------------------------------------------------------------------
-1. BATTERY → BUCK CONVERTER
---------------------------------------------------------------------------------
+> Based on code.ino — this is the actual firmware-verified pin mapping.
 
-   Battery (+) → Buck IN+
-   Battery (−) → Buck IN−
+---
 
---------------------------------------------------------------------------------
-2. BATTERY → MDD20A
---------------------------------------------------------------------------------
+Power Rail
 
-   Battery (+) → MDD20A B+
-   Battery (−) → MDD20A B−
 
---------------------------------------------------------------------------------
-3. BUCK CONVERTER → ESP32
---------------------------------------------------------------------------------
+LiPo 11.1V (+) ──┬──→ MDD20A  B+
+                 └──→ LM2596S IN+
 
-   Buck OUT+ (5V) → ESP32 VIN
-   Buck OUT−      → ESP32 GND
+LiPo 11.1V (−) ──┬──→ MDD20A  B−
+                 └──→ LM2596S IN−
 
---------------------------------------------------------------------------------
-4. BUCK CONVERTER → RECEIVER
---------------------------------------------------------------------------------
+LM2596S OUT+ (5V) ──┬──→ ESP32    VIN
+                    └──→ Receiver VCC
 
-   Buck OUT+ (5V) → Receiver VCC
-   Buck OUT−      → Receiver GND
+LM2596S OUT− (GND) ──┬──→ ESP32    GND
+                     └──→ Receiver GND
 
---------------------------------------------------------------------------------
-5. RECEIVER → ESP32
---------------------------------------------------------------------------------
 
-   CH1 Signal → ESP32 GPIO 18  (Steering)
-   CH3 Signal → ESP32 GPIO 19  (Throttle)
-   CH5 Signal → ESP32 GPIO 23  (Emergency Stop)
+> ⚠️ Set buck converter to exactly 5V with a multimeter before connecting ESP32 or receiver.
 
---------------------------------------------------------------------------------
-6. ESP32 → MDD20A
---------------------------------------------------------------------------------
+---
 
-   ESP32 GPIO 25 → MDD20A PWM1  (Right side speed)
-   ESP32 GPIO 27 → MDD20A DIR1  (Right side direction)
-   ESP32 GPIO 14 → MDD20A PWM2  (Left side speed)
-   ESP32 GPIO 12 → MDD20A DIR2  (Left side direction)
-   ESP32 GND     → MDD20A GND
+RC Receiver → ESP32
 
---------------------------------------------------------------------------------
-7. MDD20A → MOTORS
---------------------------------------------------------------------------------
+| Receiver Pin | ESP32 GPIO | Function |
+|---|---|---|
+| CH1 Signal | GPIO 18 | Steering (Left / Right) |
+| CH2 Signal | GPIO 19 | Throttle (Forward / Backward) |
+| VCC | VIN (5V from buck) | Power |
+| GND | GND | Ground |
 
-   MDD20A M1A → Front-right motor (+)  ─┐
-   MDD20A M1A → Rear-right  motor (+)  ─┘ (parallel)
+---
 
-   MDD20A M1B → Front-right motor (−)  ─┐
-   MDD20A M1B → Rear-right  motor (−)  ─┘ (parallel)
+ESP32 → MDD20A
 
-   MDD20A M2A → Front-left  motor (+)  ─┐
-   MDD20A M2A → Rear-left   motor (+)  ─┘ (parallel)
+| ESP32 GPIO | MDD20A Pin | Function |
+|---|---|---|
+| GPIO 25 | SLEEP1 | Right channel enable (LOW = on) |
+| GPIO 26 | DIR1 | Right direction |
+| GPIO 27 | PWM1 | Right speed |
+| GPIO 32 | SLEEP2 | Left channel enable (LOW = on) |
+| GPIO 33 | DIR2 | Left direction |
+| GPIO 14 | PWM2 | Left speed |
+| GND | GND | Common ground |
 
-   MDD20A M2B → Front-left  motor (−)  ─┐
-   MDD20A M2B → Rear-left   motor (−)  ─┘ (parallel)
+> ⚠️ SLEEP pins are pulled LOW in firmware to enable the driver channels.
+> Pulling HIGH disables them.
 
-================================================================================
-                           END OF CONNECTIONS LIST
-================================================================================
+---
+
+MDD20A → Motors
+
+| Driver Terminal | Motors Connected | Side |
+|---|---|---|
+| M1A / M1B | Front-Right + Rear-Right (parallel) | Right |
+| M2A / M2B | Front-Left + Rear-Left (parallel) | Left |
+
+> Both motors on each side share the same PWM + DIR signal via parallel wiring.
+
+---
+
+Full Connection Summary
+
+
+[FlySky FS-i6S]
+      │ 2.4GHz AFHDS 2A
+      ▼
+[FlySky FS-iA10B Receiver]
+  CH1 ──→ GPIO 18  (Steering)
+  CH2 ──→ GPIO 19  (Throttle)
+  VCC ──→ 5V (from buck)
+  GND ──→ GND
+
+[ESP32 DevKit V1]
+  GPIO 25 ──→ MDD20A SLEEP1
+  GPIO 26 ──→ MDD20A DIR1
+  GPIO 27 ──→ MDD20A PWM1
+  GPIO 32 ──→ MDD20A SLEEP2
+  GPIO 33 ──→ MDD20A DIR2
+  GPIO 14 ──→ MDD20A PWM2
+  GND     ──→ MDD20A GND
+
+[MDD20A Motor Driver]
+  B+ / B− ──→ LiPo 11.1V direct
+  M1A/M1B ──→ Front-Right + Rear-Right motors (parallel)
+  M2A/M2B ──→ Front-Left  + Rear-Left  motors (parallel)
+
+[LiPo 11.1V 3S]
+  (+) ──→ MDD20A B+  and  LM2596S IN+
+  (−) ──→ MDD20A B−  and  LM2596S IN−
+
+[LM2596S Buck Converter]
+  IN+/IN− ──→ LiPo
+  OUT+ 5V ──→ ESP32 VIN  +  Receiver VCC
+  OUT− GND──→ ESP32 GND  +  Receiver GND
+
