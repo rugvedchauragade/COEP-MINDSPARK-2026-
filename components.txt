@@ -1,0 +1,201 @@
+================================================================================
+                        BOT WRESTLING - MINDSPARK COEP
+                         COMPLETE COMPONENTS LIST
+================================================================================
+
+1. MOTORS
+   -------
+   Name     : High Torque 12V DC Geared Motor
+   Model    : RKI-1310
+   Specs    : 600 RPM
+              4.5 kg-cm torque
+              7.5A max load current
+              37mm gearbox diameter
+              6mm D-shaft
+              180g weight
+   Quantity : 4
+
+--------------------------------------------------------------------------------
+
+2. MOTOR DRIVER
+   ------------
+   Name     : Rhino Smart Dual DC Motor Driver
+   Model    : RMCS-2310 (MDD20A)
+   Specs    : 2 Channels
+              20A continuous per channel
+              60A peak per channel
+              Operating Voltage: 6V - 30V
+              Input logic: 1.8V, 3.3V, 5V, 12V compatible
+              Overcurrent protection
+              Temperature protection
+              Dimension: 89mm x 79mm
+   Quantity : 1
+
+   Pins Used:
+   PWM1, DIR1 → Right side motors (Channel 1)
+   PWM2, DIR2 → Left side motors  (Channel 2)
+   M1A, M1B   → Right side motors (Front-right + Rear-right in parallel)
+   M2A, M2B   → Left side motors  (Front-left  + Rear-left  in parallel)
+
+--------------------------------------------------------------------------------
+
+3. BATTERY - MAIN
+   --------------
+   Name     : GenX Power Premium LiPo Battery
+   Model    : RKI-4891
+   Specs    : 11.1V
+              3S (3 cells in series)
+              5200mAh capacity
+              40C continuous discharge
+              80C burst discharge
+              XT60 Connector
+              414g weight
+   Quantity : 1
+   Usage    : Main competition battery
+
+--------------------------------------------------------------------------------
+
+4. BATTERY - BACKUP
+   ----------------
+   Name     : GenX Power Premium LiPo Battery
+   Model    : RKI-4890
+   Specs    : 11.1V
+              3S (3 cells in series)
+              3300mAh capacity
+              40C continuous discharge
+              80C burst discharge
+              XT60 Connector
+              363g weight
+   Quantity : 1
+   Usage    : Backup battery
+
+--------------------------------------------------------------------------------
+
+5. RC TRANSMITTER
+   --------------
+   Name     : FlySky FS-i6S 2.4GHz RC Transmitter
+   Specs    : 10 Channels
+              Frequency: 2.4055 - 2.475 GHz
+              2.4G Mode: AFHDS 2A
+              Modulation: GFSK
+              RF Power: Less than 20dBm
+              Weight: 410g
+   Quantity : 1
+
+   Channel Mapping:
+   CH1 → Steering  (Right joystick Left/Right)
+   CH3 → Throttle  (Left joystick Up/Down)
+   CH5 → Emergency Stop (Switch)
+
+--------------------------------------------------------------------------------
+
+6. RC RECEIVER
+   -----------
+   Name     : FlySky FS-iA10B 10CH Receiver
+   Specs    : 10 Channels
+              Frequency: 2.4055 - 2.475 GHz
+              Sensitivity: -105dBm
+              2.4G Mode: AFHDS 2A
+              Modulation: GFSK
+              Weight: 15g
+   Quantity : 1
+
+   Pins Used:
+   VCC        → 5V from Buck Converter
+   GND        → Common Ground
+   CH1 Signal → ESP32 GPIO 18 (Steering)
+   CH3 Signal → ESP32 GPIO 19 (Throttle)
+   CH5 Signal → ESP32 GPIO 23 (Emergency Stop)
+
+--------------------------------------------------------------------------------
+
+7. MICROCONTROLLER
+   ---------------
+   Name     : ESP32 DevKit V1
+   Specs    : Dual-core 240MHz processor
+              WiFi + Bluetooth built-in
+              3.3V logic level
+   Quantity : 1
+
+   Pin Mapping:
+   VIN      → 5V from Buck Converter
+   GND      → Common Ground
+   GPIO 18  → Receiver CH1 (Steering)
+   GPIO 19  → Receiver CH3 (Throttle)
+   GPIO 23  → Receiver CH5 (Emergency Stop)
+   GPIO 25  → MDD20A PWM1  (Right speed)
+   GPIO 27  → MDD20A DIR1  (Right direction)
+   GPIO 14  → MDD20A PWM2  (Left speed)
+   GPIO 12  → MDD20A DIR2  (Left direction)
+
+--------------------------------------------------------------------------------
+
+8. BUCK CONVERTER
+   --------------
+   Name     : LM2596S DC-DC Buck Converter
+   Specs    : Input Voltage  : 4V - 40V DC
+              Output Voltage : 1.25V - 35V DC (Adjustable, set to 5V)
+              Output Current : 2A continuous
+              Efficiency     : Up to 92%
+              Dimensions     : 43mm x 21mm x 14mm
+   Quantity : 1
+
+   Pins Used:
+   IN+  → Battery (+)
+   IN−  → Battery (−)
+   OUT+ → ESP32 VIN + Receiver VCC (5V)
+   OUT− → Common Ground
+
+--------------------------------------------------------------------------------
+
+9. WHEELS
+   ------
+   Diameter : 100mm
+   Shaft    : Direct fit on 6mm D-shaft
+   Mount    : Grub screw
+   Quantity : 4
+
+--------------------------------------------------------------------------------
+
+10. CHASSIS
+    -------
+    Material : Metal
+    Max Size : 300mm x 300mm
+
+--------------------------------------------------------------------------------
+                         WIRING CONNECTIONS
+--------------------------------------------------------------------------------
+
+BATTERY → BUCK CONVERTER:
+   Battery (+) → Buck IN+
+   Battery (−) → Buck IN−
+
+BATTERY → MDD20A:
+   Battery (+) → MDD20A B+
+   Battery (−) → MDD20A B−
+
+BUCK CONVERTER → ESP32 + RECEIVER:
+   Buck OUT+ (5V) → ESP32 VIN
+   Buck OUT+ (5V) → Receiver VCC
+   Buck OUT−      → ESP32 GND
+   Buck OUT−      → Receiver GND
+
+RECEIVER → ESP32:
+   CH1 Signal → GPIO 18 (Steering)
+   CH3 Signal → GPIO 19 (Throttle)
+   CH5 Signal → GPIO 23 (Emergency Stop)
+
+ESP32 → MDD20A:
+   GPIO 25 → PWM1  (Right speed)
+   GPIO 27 → DIR1  (Right direction)
+   GPIO 14 → PWM2  (Left speed)
+   GPIO 12 → DIR2  (Left direction)
+   GND     → MDD20A GND
+
+MDD20A → MOTORS:
+   M1A, M1B → Front-right + Rear-right motors (parallel)
+   M2A, M2B → Front-left  + Rear-left  motors (parallel)
+
+================================================================================
+                        END OF COMPONENTS LIST
+================================================================================
